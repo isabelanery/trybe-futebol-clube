@@ -29,7 +29,7 @@ UserModel.init({
   },
 }, {
   sequelize: db,
-  modelName: 'userModel',
+  modelName: 'UserModel',
   tableName: 'users',
   underscored: true,
 });
