@@ -7,13 +7,19 @@ export default class UserService {
   : { email: string, password: string }): Promise<string> {
     const user = await UserModel.findOne({ where: { email } });
 
-    if (!user || !bcrypt.compareSync(password, user.password)) {
+    if (!user) {
       const e = new Error('Invalid fields');
       e.name = 'ValidationError';
       throw e;
     }
 
-    const { password: senha, ...userWithoutPassword } = user;
+    const { password: passwordHash, ...userWithoutPassword } = user;
+
+    if (!bcrypt.compareSync(password, passwordHash)) {
+      const e = new Error('Invalid fields');
+      e.name = 'ValidationError';
+      throw e;
+    }
 
     const token = await JwtService.createToken(userWithoutPassword);
 
