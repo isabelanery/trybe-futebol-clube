@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import 'express-async-errors';
 
-const errorMiddleware = (err: Error, req: Request, res: Response, next: NextFunction) => {
+const errorMiddleware = (err: Error, _req: Request, res: Response, next: NextFunction) => {
   const { name, message, details } = err as any;
 
   switch (name) {
@@ -21,7 +21,7 @@ const errorMiddleware = (err: Error, req: Request, res: Response, next: NextFunc
       res.sendStatus(500).json({ message: err });
   }
 
-  next();
+  next(err);
 };
 
 export default errorMiddleware;

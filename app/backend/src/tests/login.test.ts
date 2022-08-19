@@ -13,7 +13,7 @@ chai.use(chaiHttp);
 
 const { expect } = chai;
 
-describe('/login', () => {
+describe('/login', async () => {
   let chaiHttpResponse: Response;
 
   before(async () => {
@@ -25,7 +25,7 @@ describe('/login', () => {
   after(()=>{
     (UserModel.findOne as sinon.SinonStub).restore();
   })
-
+  
   it('A requisição POST para rota inicial retorna um objeto com a chave "token"', async () => {
     chaiHttpResponse = await chai.request(app)
       .post('/login')
@@ -37,7 +37,7 @@ describe('/login', () => {
     expect(chaiHttpResponse).to.have.property('token');
   });
 
-  it('Essa requisição deve retornar código de status 200', () => {
+  it('Essa requisição deve retornar código de status 200', async () => {
     expect(chaiHttpResponse).to.have.status(200);
   });
 });
