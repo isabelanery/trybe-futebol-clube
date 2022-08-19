@@ -20,7 +20,7 @@ describe('/login', async () => {
     before(async () => {
       sinon
         .stub(UserModel, "findOne")
-        .resolves(UserMock.findOne as unknown as UserModel);
+        .resolves(UserMock.findOne as UserModel);
     });
   
     after(()=>{
@@ -34,10 +34,8 @@ describe('/login', async () => {
           email: 'user@user.com',
           password: 'secret_user', 
         });
-  
-        console.log(chaiHttpResponse.body);
         
-      expect(chaiHttpResponse).to.have.property('token');
+      expect(chaiHttpResponse.body).to.have.property('token');
     });
     
     it('Essa requisição deve retornar código de status 200', async () => {
@@ -52,7 +50,7 @@ describe('/login', async () => {
           password: 'secret_user', 
         });
   
-      expect(chaiHttpResponse).to.have.property('message');
+      expect(chaiHttpResponse.body).to.have.property('message');
       expect(chaiHttpResponse).to.have.status(400);
     });
     
@@ -64,7 +62,7 @@ describe('/login', async () => {
           password: '', 
         });
   
-      expect(chaiHttpResponse).to.have.property('message');
+      expect(chaiHttpResponse.body).to.have.property('message');
       expect(chaiHttpResponse).to.have.status(400);
     });
     
@@ -76,7 +74,7 @@ describe('/login', async () => {
         password: 'test_user', 
       });
 
-    expect(chaiHttpResponse).to.have.property('message');
+    expect(chaiHttpResponse.body).to.have.property('message');
     expect(chaiHttpResponse.body.message).to.equal('Incorrect email or password');
     expect(chaiHttpResponse).to.have.status(401);
   });
@@ -103,7 +101,7 @@ describe('/login', async () => {
           password: 'secret_user', 
         });
 
-      expect(chaiHttpResponse).to.have.property('message');
+      expect(chaiHttpResponse.body).to.have.property('message');
       expect(chaiHttpResponse.body.message).to.equal('Incorrect email or password');
       expect(chaiHttpResponse).to.have.status(401);
     });
@@ -119,7 +117,7 @@ describe('/login/validate', () => {
     const tokenMock = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlVzZXIiLCJlbWFpbCI6InVzZXJAdXNlci5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTY2MDkxOTU0OCwiZXhwIjoxNjYxMTc4NzQ4fQ.kTcGKOf91qiKwvMUmqy5A7skNSQAUBtL1XPI_eGQhT8";
     chaiHttpResponse = await chai.request(app)
       .get('/login/validate')
-      .set('Authorization' ,tokenMock)
+      .set('Authorization', tokenMock)
       
     expect(chaiHttpResponse.body).to.have.property('role');
     expect(chaiHttpResponse.body.role).to.equal('user');
@@ -130,13 +128,13 @@ describe('/login/validate', () => {
   });
 
   it('Caso o token enviado seja inválido, a requisição retorna um objeto com a mensagem de erro', async () => {
-    const tokenMock = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dXNlci5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTY2MDkxOTU0OCwiZXhwIjoxNjYxMTc4NzQ4fQ";
+    const tokenMock = "token";
     chaiHttpResponse = await chai.request(app)
       .get('/login/validate')
-      .set('Authorization' ,tokenMock)
+      .set('Authorization', tokenMock)
       
     expect(chaiHttpResponse.body).to.have.property('message');
-    expect(chaiHttpResponse.body.role).to.equal('Invalid token');
+    expect(chaiHttpResponse.body.message).to.equal('Invalid token');
     expect(chaiHttpResponse).to.have.status(401);
   });
 });
