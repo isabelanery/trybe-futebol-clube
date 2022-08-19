@@ -7,19 +7,19 @@ export default class UserService {
   : { email: string, password: string }): Promise<string> {
     const user = await UserModel.findOne({ where: { email } });
 
-    if (!user) {
+    if (!user || !bcrypt.compareSync(password, user.password)) {
       const e = new Error('Incorrect email or password');
       e.name = 'Unauthorized';
       throw e;
     }
 
-    const { password: passwordHash, username } = user;
+    const { username } = user;
 
-    if (!bcrypt.compareSync(password, passwordHash)) {
-      const e = new Error('Incorrect email or password');
-      e.name = 'Unauthorized';
-      throw e;
-    }
+    // if (!bcrypt.compareSync(password, user.password)) {
+    //   const e = new Error('Incorrect email or password');
+    //   e.name = 'Unauthorized';
+    //   throw e;
+    // }
 
     const token = await JwtService.createToken({ username, email });
 

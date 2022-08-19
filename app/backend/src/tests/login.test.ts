@@ -34,10 +34,62 @@ describe('/login', async () => {
         password: 'secret_user', 
       });
 
+      console.log(chaiHttpResponse.body);
+      
     expect(chaiHttpResponse).to.have.property('token');
   });
-
+  
   it('Essa requisição deve retornar código de status 200', async () => {
     expect(chaiHttpResponse).to.have.status(200);
+  });
+  
+  it('A requisição deve conter o campo "email"', async () => {
+    chaiHttpResponse = await chai.request(app)
+      .post('/login')
+      .send({
+        email: '',
+        password: 'secret_user', 
+      });
+
+    expect(chaiHttpResponse).to.have.property('message');
+    expect(chaiHttpResponse).to.have.status(400);
+  });
+  
+  it('A requisição deve conter o campo "password"', async () => {
+    chaiHttpResponse = await chai.request(app)
+      .post('/login')
+      .send({
+        email: 'user@user.com',
+        password: '', 
+      });
+
+    expect(chaiHttpResponse).to.have.property('message');
+    expect(chaiHttpResponse).to.have.status(400);
+  });
+  
+  it('Não é possível fazer o login com um email inválido', async () => {
+    chaiHttpResponse = await chai.request(app)
+      .post('/login')
+      .send({
+        email: 'user@test.com',
+        password: 'secret_user', 
+      });
+
+    expect(chaiHttpResponse).to.have.property('message');
+    expect(chaiHttpResponse.body.message).to.equal('Incorrect email or password');
+    expect(chaiHttpResponse).to.have.status(401);
+  });
+  
+  it('Não é possível fazer o login com uma senha inválida', async () => {
+    chaiHttpResponse = await chai.request(app)
+      .post('/login')
+      .send({
+        email: 'user@user.com',
+        password: 'test_user', 
+      });
+
+    expect(chaiHttpResponse).to.have.property('message');
+    expect(chaiHttpResponse.body.message).to.equal('Incorrect email or password');
+    expect(chaiHttpResponse).to.have.status(401);
   });
 });
