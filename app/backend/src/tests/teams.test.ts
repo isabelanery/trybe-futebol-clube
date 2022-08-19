@@ -4,8 +4,8 @@ import * as chai from 'chai';
 import chaiHttp = require('chai-http');
 
 import { app } from '../app';
-import UserModel from '../database/models/user.model';
-const UserMock = require('./mock/models/Users.json');
+import TeamModel from '../database/models/team.model';
+const TeamMock = require('./mock/models/Teams.json');
 
 import { Response } from 'superagent';
 
@@ -18,19 +18,47 @@ describe('/teams', async () => {
 
   before(async () => {
     sinon
-      .stub(UserModel, "findOne")
-      .resolves(UserMock.findOne as unknown as UserModel);
+      .stub(TeamModel, "findAll")
+      .resolves(TeamMock.findAll as unknown as TeamModel[]);
   });
 
   after(()=>{
-    (UserModel.findOne as sinon.SinonStub).restore();
+    (TeamModel.findAll as sinon.SinonStub).restore();
   })
   
-  it('A requisição POST para rota inicial retorna um objeto com a chave "token"', async () => {
+  it('A requisição GET para rota inicial retorna um array de objetos', async () => {
     chaiHttpResponse = await chai.request(app)
       .get('/teams')
 
     expect(chaiHttpResponse.body).to.be.an('array');
+    expect(chaiHttpResponse.body[0]).to.have.property('teamName');
+  });
+  
+  it('Essa requisição deve retornar código de status 200', async () => {
+    expect(chaiHttpResponse).to.have.status(200);
+  });
+
+});
+
+describe('/teams/:id', async () => {
+  let chaiHttpResponse: Response;
+
+  before(async () => {
+    sinon
+      .stub(TeamModel, "findByPk")
+      .resolves(TeamMock.findByPk as unknown as TeamModel);
+  });
+
+  after(()=>{
+    (TeamModel.findByPk as sinon.SinonStub).restore();
+  })
+  
+  it('A requisição GET para rota inicial retorna um objetos', async () => {
+    chaiHttpResponse = await chai.request(app)
+      .get('/teams/1')
+
+    expect(chaiHttpResponse.body).to.have.property('teamName');
+    expect(chaiHttpResponse.body.teamName).to.equal('Avaí/Kindermann');
   });
   
   it('Essa requisição deve retornar código de status 200', async () => {
