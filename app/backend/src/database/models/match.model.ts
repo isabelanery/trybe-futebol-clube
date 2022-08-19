@@ -1,7 +1,8 @@
-import { Model, INTEGER, STRING } from 'sequelize';
+import { Model, INTEGER } from 'sequelize';
 import db from '.';
+import Team from './team.model';
 
-class UserModel extends Model {
+class Matches extends Model {
   id!: number;
   homeTeam!: number;
   homeTeamGoals!: number;
@@ -10,7 +11,7 @@ class UserModel extends Model {
   inProgress!: number;
 }
 
-UserModel.init({
+Matches.init({
   id: {
     type: INTEGER,
     primaryKey: true,
@@ -33,10 +34,16 @@ UserModel.init({
   },
 }, {
   sequelize: db,
-  modelName: 'MatchModel',
+  modelName: 'Matches',
   tableName: 'matches',
   underscored: true,
   timestamps: false,
 });
 
-export default UserModel;
+Team.hasMany(Matches, { foreignKey: 'id', as: 'homeTeam' });
+Matches.belongsTo(Team, { foreignKey: 'id', as: 'homeTeam' });
+
+Team.hasMany(Matches, { foreignKey: 'id', as: 'awayTeam' });
+Matches.belongsTo(Team, { foreignKey: 'id', as: 'awayTeam' });
+
+export default Matches;
