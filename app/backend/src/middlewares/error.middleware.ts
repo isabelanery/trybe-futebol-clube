@@ -21,7 +21,7 @@ const errorMiddleware = (err: Error, _req: Request, res: Response, next: NextFun
       res.sendStatus(500).json({ message: err });
   }
 
-  next(err);
+  next();
 };
 
 export default errorMiddleware;
