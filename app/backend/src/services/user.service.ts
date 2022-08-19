@@ -8,16 +8,16 @@ export default class UserService {
     const user = await UserModel.findOne({ where: { email } });
 
     if (!user) {
-      const e = new Error('Invalid fields');
-      e.name = 'ValidationError';
+      const e = new Error('Incorrect email or password');
+      e.name = 'Unauthorized';
       throw e;
     }
 
     const { password: passwordHash, username } = user;
 
     if (!bcrypt.compareSync(password, passwordHash)) {
-      const e = new Error('Invalid fields');
-      e.name = 'ValidationError';
+      const e = new Error('Incorrect email or password');
+      e.name = 'Unauthorized';
       throw e;
     }
 
