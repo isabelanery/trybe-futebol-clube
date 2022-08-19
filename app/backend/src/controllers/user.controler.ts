@@ -6,7 +6,7 @@ export default class UserController {
   static async login(req: Request, res: Response) {
     const { email, password } = req.body;
 
-    const token = UserService.validateLogin({ email, password });
+    const token = await UserService.validateLogin({ email, password });
 
     res.status(StatusCodes.OK).json({ token });
   }

@@ -1,15 +1,12 @@
 import jwt = require('jsonwebtoken');
 import { JwtPayload } from 'jsonwebtoken';
 import 'dotenv/config';
-import User from '../interfaces/user.interface';
 
 const jwtSecret: string = process.env.JWT_SECRET || 'dev';
 
 export default class JwtService {
-  static createToken = (payload: User): string => {
-    const { password, ...data } = payload;
-
-    const token = jwt.sign(data, jwtSecret, {
+  static createToken = (payload: { email: string, username: string }): string => {
+    const token = jwt.sign(payload, jwtSecret, {
       algorithm: 'HS256',
       expiresIn: '3d',
     });

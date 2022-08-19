@@ -13,7 +13,7 @@ export default class UserService {
       throw e;
     }
 
-    const { password: passwordHash } = user;
+    const { password: passwordHash, username } = user;
 
     if (!bcrypt.compareSync(password, passwordHash)) {
       const e = new Error('Invalid fields');
@@ -21,7 +21,7 @@ export default class UserService {
       throw e;
     }
 
-    const token = await JwtService.createToken(user);
+    const token = await JwtService.createToken({ username, email });
 
     return token;
   }

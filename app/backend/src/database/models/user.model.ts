@@ -32,6 +32,7 @@ UserModel.init({
   modelName: 'UserModel',
   tableName: 'users',
   underscored: true,
+  timestamps: false,
 });
 
 export default UserModel;
