@@ -9,7 +9,7 @@ router.route('/')
     MatchesController.list,
   );
 
-router.route('/')
+router.route('/search')
   .get(
     MatchesController.listInProgress,
   );

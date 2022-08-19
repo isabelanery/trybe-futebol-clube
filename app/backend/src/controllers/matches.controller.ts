@@ -10,7 +10,9 @@ export default class matchesController {
   }
 
   static async listInProgress(req: Request, res: Response) {
-    const { q: inProgress } = req.query;
+    const { inProgress } = req.query;
+    console.log(inProgress);
+
     const bool = inProgress === 'true';
     const matches = await MatchesService.listInProgress(bool);
 

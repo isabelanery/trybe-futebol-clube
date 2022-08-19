@@ -29,12 +29,6 @@ export default class UserService {
   static validateLogin(token: string): string {
     const { role } = JwtService.validateToken(token);
 
-    if (!role) {
-      const e = new Error('Invalid token');
-      e.name = 'Unauthorized';
-      throw e;
-    }
-
     return role;
   }
 }
