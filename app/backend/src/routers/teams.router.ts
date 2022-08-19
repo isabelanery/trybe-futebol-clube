@@ -9,4 +9,9 @@ router.route('/')
     TeamsController.list,
   );
 
+router.route('/:id')
+  .get(
+    TeamsController.findById,
+  );
+
 export default router;
