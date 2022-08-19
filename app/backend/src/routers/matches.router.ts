@@ -9,9 +9,9 @@ router.route('/')
     MatchesController.list,
   );
 
-// router.route('/:id')
-//   .get(
-//     MatchesController.findById,
-//   );
+router.route('/')
+  .get(
+    MatchesController.listInProgress,
+  );
 
 export default router;
