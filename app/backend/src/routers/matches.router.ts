@@ -19,6 +19,7 @@ router.route('/:id/finish')
   .patch(MatchesController.finish);
 
 router.route('/:id')
+  .patch(MatchesController.update)
   .get(MatchesController.findById);
 
 export default router;

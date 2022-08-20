@@ -47,7 +47,7 @@ export default class MatchesService {
     return newMatch as Match;
   }
 
-  static async finish(id: number) {
+  static async findById(id: number): Promise<Match> {
     const match = await Matches.findByPk(id);
 
     if (!match) {
@@ -55,12 +55,28 @@ export default class MatchesService {
       e.name = 'NotFoundError';
       throw e;
     }
+    return match as Match;
+  }
+
+  static async finish(id: number) {
+    await this.findById(id);
+
+    // if (!match) {
+    //   const e = new Error('There is no team with such id!');
+    //   e.name = 'NotFoundError';
+    //   throw e;
+    // }
 
     await Matches.update({ inProgress: false }, { where: { id } });
   }
 
-  static async findById(id: number): Promise<Match> {
-    const match = await Matches.findByPk(id);
+  static async update({ id, homeTeamGoals, awayTeamGoals }
+  : { id: number, homeTeamGoals: number, awayTeamGoals: number }) {
+    await this.findById(id);
+
+    await Matches.update({ homeTeamGoals, awayTeamGoals }, { where: { id } });
+
+    const match = await this.findById(id);
 
     return match as Match;
   }
