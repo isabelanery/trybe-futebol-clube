@@ -9,6 +9,7 @@ router.route('/')
   .get(MatchesController.list)
   .post(
     Validate.token,
+    Validate.teams,
     MatchesController.create,
   );
 

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import Joi = require('joi');
+import MatchesService from '../services/matches.service';
 import JwtService from '../services/jwt.service';
 
 export default class Validate {
@@ -38,6 +39,15 @@ export default class Validate {
     //   e.name = 'Unauthorized';
     //   throw e;
     // }
+
+    next();
+  }
+
+  static async teams(req: Request, _res: Response, next: NextFunction) {
+    const { homeTeam, awayTeam } = req.body;
+
+    await MatchesService.findById(+homeTeam);
+    await MatchesService.findById(+awayTeam);
 
     next();
   }

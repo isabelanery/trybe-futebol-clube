@@ -30,7 +30,9 @@ export default class matchesController {
   static async finish(req: Request, res: Response) {
     const { id } = req.params;
 
-    await MatchesService.finish(+id);
+    const finished = await MatchesService.finish(+id);
+
+    console.log(finished);
 
     res.status(StatusCodes.OK).json({ message: 'Finished' });
   }
