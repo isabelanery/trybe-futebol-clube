@@ -4,7 +4,7 @@ import 'express-async-errors';
 const errorMiddleware = (err: Error, _req: Request, res: Response, next: NextFunction) => {
   const { name, message, details } = err as any;
 
-  // console.log(err, 'err');
+  console.log(err.message, 'err');
 
   switch (name) {
     case 'ValidationError':

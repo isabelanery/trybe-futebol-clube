@@ -13,9 +13,9 @@ chai.use(chaiHttp);
 
 const { expect } = chai;
 
-describe('/matches', async () => {
-  let chaiHttpResponse: Response;
+let chaiHttpResponse: Response;
 
+describe('/matches', async () => {
   describe('GET', () => {
     before(async () => {
       sinon
@@ -52,7 +52,7 @@ describe('/matches', async () => {
       (MatchesModel.create as sinon.SinonStub).restore();
     })
     
-      it('A requisição POST para rota inicial retorna um de objetos com o id da partida cadastrada', async () => {
+      it('A requisição para rota inicial retorna um de objetos com o id da partida cadastrada', async () => {
         const tokenMock = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlVzZXIiLCJlbWFpbCI6InVzZXJAdXNlci5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTY2MDkxOTU0OCwiZXhwIjoxNjYxMTc4NzQ4fQ.kTcGKOf91qiKwvMUmqy5A7skNSQAUBtL1XPI_eGQhT8";
     
         chaiHttpResponse = await chai.request(app)
@@ -74,7 +74,6 @@ describe('/matches', async () => {
         expect(chaiHttpResponse).to.have.status(200);
       });
   });
-
 });
 
 describe('/matches/search?inProgress=false', async () => {
@@ -102,4 +101,33 @@ describe('/matches/search?inProgress=false', async () => {
     expect(chaiHttpResponse).to.have.status(200);
   });
   
+});
+
+describe('/:id', () => {
+
+  describe('PATCH', () => {
+    it('A requisição para rota inicial retorna um de objetos com o id da partida cadastrada', async () => {
+      const tokenMock = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlVzZXIiLCJlbWFpbCI6InVzZXJAdXNlci5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTY2MDkxOTU0OCwiZXhwIjoxNjYxMTc4NzQ4fQ.kTcGKOf91qiKwvMUmqy5A7skNSQAUBtL1XPI_eGQhT8";
+  
+      chaiHttpResponse = await chai.request(app)
+        .patch('/matches/7')
+        .send({
+          homeTeamGoals: 4,
+          awayTeamGoals: 2
+        })
+        .set('Authorization', tokenMock);
+  
+      expect(chaiHttpResponse.body).to.have.property('id');
+      expect(chaiHttpResponse.body).to.have.property('homeTeamGoals');
+      expect(chaiHttpResponse.body.inProgress).to.equal(4);
+    });
+    
+    it('Essa requisição deve retornar código de status 200', async () => {
+      expect(chaiHttpResponse).to.have.status(200);
+    });
+  });
+});
+
+describe('/matches/:id/finish', () => {
+
 });

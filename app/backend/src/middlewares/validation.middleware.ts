@@ -22,7 +22,7 @@ export default class Validate {
     next();
   }
 
-  static async token(req: Request, res: Response, next: NextFunction) {
+  static async token(req: Request, _res: Response, next: NextFunction) {
     const { authorization } = req.headers;
 
     if (!authorization) {
