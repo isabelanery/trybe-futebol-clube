@@ -28,9 +28,7 @@ export default class MatchesService {
 
   static async create({ homeTeam, homeTeamGoals, awayTeam, awayTeamGoals }: {
     homeTeam: number, homeTeamGoals: number, awayTeam: number, awayTeamGoals: number }) {
-    const verifyMatch = await Matches.findAll({ where: { homeTeam, awayTeam } });
-
-    if (verifyMatch.length > 0) {
+    if (homeTeam === awayTeam) {
       const e = new Error('It is not possible to create a match with two equal teams');
       e.name = 'Unauthorized';
       throw e;
