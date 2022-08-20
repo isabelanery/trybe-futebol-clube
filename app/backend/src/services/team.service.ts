@@ -11,6 +11,12 @@ export default class TeamService {
   static async findById(id: number): Promise<Team> {
     const team = await TeamModel.findByPk(id);
 
+    if (!team) {
+      const e = new Error('There is no team with such id!');
+      e.name = 'NotFoundError';
+      throw e;
+    }
+
     return team as Team;
   }
 }

@@ -34,12 +34,6 @@ export default class Validate {
 
     JwtService.validateToken(authorization);
 
-    // if (!role) {
-    //   const e = new Error('Invalid token');
-    //   e.name = 'Unauthorized';
-    //   throw e;
-    // }
-
     next();
   }
 
