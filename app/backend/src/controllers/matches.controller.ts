@@ -19,6 +19,14 @@ export default class matchesController {
     res.status(StatusCodes.OK).json(matches);
   }
 
+  static async create(req: Request, res: Response) {
+    const newMatch = req.body;
+
+    const createdMatch = await MatchesService.create(newMatch);
+
+    res.status(StatusCodes.OK).json(createdMatch);
+  }
+
   // static async findById(req: Request, res: Response) {
   //   const { id } = req.params;
   //   const matches = await MatchesService.findById(+id);

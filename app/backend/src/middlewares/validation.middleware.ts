@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import Joi = require('joi');
-// import JwtService from 'src/services/jwt.service';
+// import JwtService from '../services/jwt.service';
 
 export default class Validate {
   static async login(req: Request, res: Response, next: NextFunction) {
@@ -18,6 +18,26 @@ export default class Validate {
       e.name = 'ValidationError';
       throw e;
     }
+
+    next();
+  }
+
+  static async token(req: Request, res: Response, next: NextFunction) {
+    const { authorization } = req.headers;
+
+    if (!authorization) {
+      const e = new Error('Token not found');
+      e.name = 'Unauthorized';
+      throw e;
+    }
+
+    // const { role } = JwtService.validateToken(authorization);
+
+    // if (!role) {
+    //   const e = new Error('Invalid token');
+    //   e.name = 'Unauthorized';
+    //   throw e;
+    // }
 
     next();
   }

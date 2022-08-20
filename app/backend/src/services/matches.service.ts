@@ -26,6 +26,19 @@ export default class MatchesService {
     return matches as Match[];
   }
 
+  static async create({ homeTeam, homeTeamGoals, awayTeam, awayTeamGoals }: {
+    homeTeam: number, homeTeamGoals: number, awayTeam: number, awayTeamGoals: number }) {
+    const newMatch: Match = await Matches.create({
+      homeTeam,
+      awayTeam,
+      homeTeamGoals,
+      awayTeamGoals,
+      inProgress: true,
+    });
+
+    return newMatch as Match;
+  }
+
   // static async findById(id: number): Promise<Team> {
   //   const team = await Matches.findByPk(id);
 

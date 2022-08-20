@@ -16,32 +16,68 @@ const { expect } = chai;
 describe('/matches', async () => {
   let chaiHttpResponse: Response;
 
-  before(async () => {
-    sinon
-      .stub(MatchesModel, "findAll")
-      .resolves(MatchesMock.list as unknown as MatchesModel[]);
+  describe('GET', () => {
+    before(async () => {
+      sinon
+        .stub(MatchesModel, "findAll")
+        .resolves(MatchesMock.list as unknown as MatchesModel[]);
+    });
+  
+    after(()=>{
+      (MatchesModel.findAll as sinon.SinonStub).restore();
+    })
+    
+    it('A requisição para rota inicial retorna um array de objetos', async () => {
+      chaiHttpResponse = await chai.request(app)
+        .get('/matches');
+      
+      expect(chaiHttpResponse.body).to.be.an('array');
+      expect(chaiHttpResponse.body[0]).to.have.property('homeTeam');
+      expect(chaiHttpResponse.body[0]).to.have.property('awayTeam');
+    });
+    
+    it('Essa requisição deve retornar código de status 200', async () => {
+      expect(chaiHttpResponse).to.have.status(200);
+    });
   });
 
-  after(()=>{
-    (MatchesModel.findAll as sinon.SinonStub).restore();
-  })
+  describe('POST', () => {
+    before(async () => {
+      sinon
+        .stub(MatchesModel, "create")
+        .resolves(MatchesMock.create as unknown as MatchesModel);
+    });
   
-  it('A requisição GET para rota inicial retorna um array de objetos', async () => {
-    chaiHttpResponse = await chai.request(app)
-      .get('/matches');
+    after(()=>{
+      (MatchesModel.create as sinon.SinonStub).restore();
+    })
     
-    expect(chaiHttpResponse.body).to.be.an('array');
-    expect(chaiHttpResponse.body[0]).to.have.property('homeTeam');
-    expect(chaiHttpResponse.body[0]).to.have.property('awayTeam');
-  });
-  
-  it('Essa requisição deve retornar código de status 200', async () => {
-    expect(chaiHttpResponse).to.have.status(200);
+      it('A requisição POST para rota inicial retorna um de objetos com o id da partida cadastrada', async () => {
+        const tokenMock = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlVzZXIiLCJlbWFpbCI6InVzZXJAdXNlci5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTY2MDkxOTU0OCwiZXhwIjoxNjYxMTc4NzQ4fQ.kTcGKOf91qiKwvMUmqy5A7skNSQAUBtL1XPI_eGQhT8";
+    
+        chaiHttpResponse = await chai.request(app)
+          .post('/matches')
+          .send({
+            homeTeam: 16,
+            awayTeam: 8,
+            homeTeamGoals: 2,
+            awayTeamGoals: 2
+          })
+          .set('Authorization', tokenMock);
+    
+        expect(chaiHttpResponse.body).to.have.property('id');
+        expect(chaiHttpResponse.body).to.have.property('inProgress');
+        expect(chaiHttpResponse.body.inProgress).to.equal(true);
+      });
+      
+      it('Essa requisição deve retornar código de status 200', async () => {
+        expect(chaiHttpResponse).to.have.status(200);
+      });
   });
 
 });
 
-describe('/matches?inProgress=false', async () => {
+describe('/matches/search?inProgress=false', async () => {
   let chaiHttpResponse: Response;
 
   before(async () => {
@@ -56,9 +92,8 @@ describe('/matches?inProgress=false', async () => {
   
   it('A requisição GET para rota inicial retorna um array de objetos', async () => {
     chaiHttpResponse = await chai.request(app)
-      .get('/matches?inProgress=false');
+      .get('/matches/search?inProgress=false');
 
-    expect(chaiHttpResponse.body).to.be.an('array');
     expect(chaiHttpResponse.body[0]).to.have.property('inProgress');
     expect(chaiHttpResponse.body[0].inProgress).to.equal(false);
   });
@@ -66,5 +101,5 @@ describe('/matches?inProgress=false', async () => {
   it('Essa requisição deve retornar código de status 200', async () => {
     expect(chaiHttpResponse).to.have.status(200);
   });
-
+  
 });

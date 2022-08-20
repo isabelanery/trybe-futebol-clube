@@ -13,6 +13,7 @@ router.route('/')
 
 router.route('/validate')
   .get(
+    Validate.token,
     UserController.validateLogin,
   );
 
