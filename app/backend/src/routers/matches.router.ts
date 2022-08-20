@@ -15,4 +15,10 @@ router.route('/')
 router.route('/search')
   .get(MatchesController.listInProgress);
 
+router.route('/:id/finish')
+  .patch(MatchesController.finish);
+
+router.route('/:id')
+  .get(MatchesController.findById);
+
 export default router;

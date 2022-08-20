@@ -20,7 +20,7 @@ export default class JwtService {
 
       return data as JwtPayload;
     } catch (_err) {
-      const e = new Error('Invalid token');
+      const e = new Error('Token must be a valid token');
       e.name = 'Unauthorized';
       throw e;
     }

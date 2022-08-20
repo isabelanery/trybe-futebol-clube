@@ -28,6 +28,14 @@ export default class MatchesService {
 
   static async create({ homeTeam, homeTeamGoals, awayTeam, awayTeamGoals }: {
     homeTeam: number, homeTeamGoals: number, awayTeam: number, awayTeamGoals: number }) {
+    const verifyMatch = await Matches.findAll({ where: { homeTeam, awayTeam } });
+
+    if (verifyMatch) {
+      const e = new Error('It is not possible to create a match with two equal teams');
+      e.name = 'Unauthorized';
+      throw e;
+    }
+
     const newMatch: Match = await Matches.create({
       homeTeam,
       awayTeam,
@@ -39,9 +47,21 @@ export default class MatchesService {
     return newMatch as Match;
   }
 
-  // static async findById(id: number): Promise<Team> {
-  //   const team = await Matches.findByPk(id);
+  static async finish(id: number) {
+    const match = await Matches.findByPk(id);
 
-  //   return team as Team;
-  // }
+    if (!match) {
+      const e = new Error('There is no team with such id!');
+      e.name = 'NotFoundError';
+      throw e;
+    }
+
+    await Matches.update({ inProgress: false }, { where: { id } });
+  }
+
+  static async findById(id: number): Promise<Match> {
+    const match = await Matches.findByPk(id);
+
+    return match as Match;
+  }
 }

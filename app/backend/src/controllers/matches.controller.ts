@@ -27,10 +27,18 @@ export default class matchesController {
     res.status(StatusCodes.OK).json(createdMatch);
   }
 
-  // static async findById(req: Request, res: Response) {
-  //   const { id } = req.params;
-  //   const matches = await MatchesService.findById(+id);
+  static async finish(req: Request, res: Response) {
+    const { id } = req.params;
 
-  //   res.status(StatusCodes.OK).json(matches);
-  // }
+    await MatchesService.finish(+id);
+
+    res.status(StatusCodes.OK).json({ message: 'Finished' });
+  }
+
+  static async findById(req: Request, res: Response) {
+    const { id } = req.params;
+    const matches = await MatchesService.findById(+id);
+
+    res.status(StatusCodes.OK).json(matches);
+  }
 }
