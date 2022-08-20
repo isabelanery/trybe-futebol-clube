@@ -24,7 +24,7 @@ export default class matchesController {
 
     const createdMatch = await MatchesService.create(newMatch);
 
-    res.status(StatusCodes.OK).json(createdMatch);
+    res.status(StatusCodes.CREATED).json(createdMatch);
   }
 
   static async finish(req: Request, res: Response) {

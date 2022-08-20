@@ -8,6 +8,8 @@ import MatchesModel from '../database/models/matches.model';
 const MatchesMock = require('./mock/models/Matches.json');
 
 import { Response } from 'superagent';
+import JwtService from '../services/jwt.service';
+import MatchesService from '../services/matches.service';
 
 chai.use(chaiHttp);
 
@@ -46,10 +48,19 @@ describe('/matches', async () => {
       sinon
         .stub(MatchesModel, "create")
         .resolves(MatchesMock.create as unknown as MatchesModel);
+      
+      sinon
+        .stub(MatchesModel, "findAll")
+        .resolves([]);
+      
+      sinon
+        .stub(JwtService, "validateToken").resolves();
     });
   
     after(()=>{
       (MatchesModel.create as sinon.SinonStub).restore();
+      (MatchesModel.findAll as sinon.SinonStub).restore();
+      (JwtService.validateToken as sinon.SinonStub).restore();
     })
     
       it('A requisição para rota inicial retorna um de objetos com o id da partida cadastrada', async () => {
@@ -59,7 +70,7 @@ describe('/matches', async () => {
           .post('/matches')
           .send({
             homeTeam: 16,
-            awayTeam: 8,
+            awayTeam: 7,
             homeTeamGoals: 2,
             awayTeamGoals: 2
           })
@@ -70,8 +81,8 @@ describe('/matches', async () => {
         expect(chaiHttpResponse.body.inProgress).to.equal(true);
       });
       
-      it('Essa requisição deve retornar código de status 200', async () => {
-        expect(chaiHttpResponse).to.have.status(200);
+      it('Essa requisição deve retornar código de status 201', async () => {
+        expect(chaiHttpResponse).to.have.status(201);
       });
   });
 });
@@ -100,20 +111,33 @@ describe('/matches/search?inProgress=false', async () => {
   it('Essa requisição deve retornar código de status 200', async () => {
     expect(chaiHttpResponse).to.have.status(200);
   });
-  
 });
 
-describe('/:id', () => {
+describe('/matches/:id', () => {
+  let chaiHttpResponse: Response;
 
+  before(async () => {
+    sinon
+      .stub(MatchesModel, "update")
+      .resolves();
+    
+      sinon
+      .stub(MatchesService, "findById")
+      .resolves(MatchesMock.patch as MatchesModel);
+  });
+
+  after(()=>{
+    (MatchesModel.update as sinon.SinonStub).restore();
+  })
   describe('PATCH', () => {
     it('A requisição para rota inicial retorna um de objetos com o id da partida cadastrada', async () => {
       const tokenMock = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlVzZXIiLCJlbWFpbCI6InVzZXJAdXNlci5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTY2MDkxOTU0OCwiZXhwIjoxNjYxMTc4NzQ4fQ.kTcGKOf91qiKwvMUmqy5A7skNSQAUBtL1XPI_eGQhT8";
   
       chaiHttpResponse = await chai.request(app)
-        .patch('/matches/7')
+        .patch('/matches/41')
         .send({
-          homeTeamGoals: 4,
-          awayTeamGoals: 2
+          homeTeamGoals: 7,
+          awayTeamGoals: 1,
         })
         .set('Authorization', tokenMock);
   

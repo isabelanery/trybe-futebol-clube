@@ -710,5 +710,21 @@
     "homeTeamGoals": 2,
     "awayTeamGoals": 2,
     "inProgress": true
+  },
+  "findByPk": {
+    "id": 41,
+    "homeTeam": 9,
+    "homeTeamGoals": 4,
+    "awayTeam": 14,
+    "awayTeamGoals": 2,
+    "inProgress": false
+  },
+  "patch": {
+    "id": 41,
+    "homeTeam": 16,
+    "homeTeamGoals": 4,
+    "awayTeam": 9,
+    "awayTeamGoals": 2,
+    "inProgress": true
   }
 }
