@@ -51,7 +51,7 @@ export default class LeaderboardService {
   };
 
   private static calculateEfficiency = (totalPoints: number, totalGames: number) => {
-    const calculate = ((totalPoints / (totalGames * 3)) * 100);
+    const calculate = (totalPoints / (totalGames * 3)) * 100;
 
     const efficiency = parseFloat(calculate.toFixed(2));
 
@@ -83,6 +83,32 @@ export default class LeaderboardService {
     return teamLeaderboard;
   };
 
+  private static byPriority = (a: Leaderboard, b: Leaderboard) => {
+    const firstPriority = b.totalPoints - a.totalPoints;
+    const secordPriority = b.totalVictories - a.totalVictories;
+    const thirdPriority = b.goalsBalance - a.goalsBalance;
+    const fourthPriority = b.goalsFavor - a.goalsFavor;
+    const lastPriority = b.goalsOwn - a.goalsOwn;
+
+    if (firstPriority !== 0) {
+      return firstPriority;
+    }
+
+    if (secordPriority !== 0) {
+      return secordPriority;
+    }
+
+    if (thirdPriority !== 0) {
+      return thirdPriority;
+    }
+
+    if (fourthPriority !== 0) {
+      return fourthPriority;
+    }
+
+    return lastPriority;
+  };
+
   static async list(): Promise<Leaderboard[]> {
     const teams = await TeamModel.findAll({
       include: [
@@ -91,9 +117,8 @@ export default class LeaderboardService {
       ],
     });
 
-    const leaderboard = teams.map(this.getLeaderboard);
-
-    // console.log(leaderboard);
+    const leaderboard = teams.map(this.getLeaderboard)
+      .sort(this.byPriority);
 
     return leaderboard;
   }
