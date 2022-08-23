@@ -1,8 +1,8 @@
 import Match from './match.interface';
 
-export default interface Team {
+export default interface LeaderboardTeam {
   id: number,
   teamName: string,
-  homeMatches: Match[],
+  homeMatche: Match[],
   awayMatches: Match[],
 }
