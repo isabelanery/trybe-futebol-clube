@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import Joi = require('joi');
-import MatchesService from '../services/matches.service';
+// import MatchesService from '../services/matches.service';
 import JwtService from '../services/jwt.service';
+import TeamService from '../services/team.service';
 
 export default class Validate {
   static async login(req: Request, res: Response, next: NextFunction) {
@@ -40,8 +41,8 @@ export default class Validate {
   static async teams(req: Request, _res: Response, next: NextFunction) {
     const { homeTeam, awayTeam } = req.body;
 
-    await MatchesService.findById(+homeTeam);
-    await MatchesService.findById(+awayTeam);
+    await TeamService.findById(+homeTeam);
+    await TeamService.findById(+awayTeam);
 
     next();
   }

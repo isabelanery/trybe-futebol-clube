@@ -1,7 +1,6 @@
 import Match from '../interfaces/match.interface';
 import Matches from '../database/models/matches.model';
 import Team from '../database/models/team.model';
-import TeamService from './team.service';
 
 export default class MatchesService {
   static async list(): Promise<Match[]> {
@@ -34,9 +33,6 @@ export default class MatchesService {
       e.name = 'Unauthorized';
       throw e;
     }
-
-    await TeamService.findById(+homeTeam);
-    await TeamService.findById(+awayTeam);
 
     const newMatch: Match = await Matches.create({
       homeTeam,
