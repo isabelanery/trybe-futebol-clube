@@ -3,8 +3,20 @@ import { StatusCodes } from 'http-status-codes';
 import LeaderBoardService from '../services/leaderboard.service';
 
 export default class LeaderboardController {
-  static async list(_req: Request, res: Response) {
-    const teams = await LeaderBoardService.list();
+  static async listAllMatches(_req: Request, res: Response) {
+    const teams = await LeaderBoardService.listAllMatches();
+
+    res.status(StatusCodes.OK).json(teams);
+  }
+
+  static async listHomeMatches(_req: Request, res: Response) {
+    const teams = await LeaderBoardService.listHomeMatches();
+
+    res.status(StatusCodes.OK).json(teams);
+  }
+
+  static async listAwayMatches(_req: Request, res: Response) {
+    const teams = await LeaderBoardService.listAwayMatches();
 
     res.status(StatusCodes.OK).json(teams);
   }

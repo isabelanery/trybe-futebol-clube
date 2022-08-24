@@ -7,7 +7,7 @@ import Match from '../interfaces/match.interface';
 export default class LeaderboardService {
   private static homeMatchesData = (match: Match) => {
     const verifyDraw = match.awayTeamGoals === match.homeTeamGoals ? 1 : 0;
-    const matchPoints = match.awayTeamGoals > match.homeTeamGoals ? 3 : verifyDraw;
+    const matchPoints = match.homeTeamGoals > match.awayTeamGoals ? 3 : verifyDraw;
 
     const data = {
       matchPoints,
@@ -33,7 +33,7 @@ export default class LeaderboardService {
     return data;
   };
 
-  private static formatMatches = (
+  private static getTeamPoints = (
     acc: { totalPoints: number; goalsFavor: number; goalsOwn: number; goalsBalance: number;
       totalVictories: number; totalDraws: number; totalLosses: number; },
     curr:{ matchPoints: number; goalsFavor: number; goalsOwn: number; goalsBalance: number; },
@@ -53,34 +53,52 @@ export default class LeaderboardService {
   private static calculateEfficiency = (totalPoints: number, totalGames: number) => {
     const calculate = (totalPoints / (totalGames * 3)) * 100;
 
-    const efficiency = parseFloat(calculate.toFixed(2));
+    const efficiency = calculate.toFixed(2);
 
     return efficiency;
   };
 
-  private static getLeaderboard = (team: Team) => {
+  private static getMatches = (team: Team) => {
+    if (team.homeMatches && team.awayMatches) {
+      const formatedMatches = [
+        ...team.homeMatches.map(this.homeMatchesData),
+        ...team.awayMatches.map(this.awayMatchesData),
+      ];
+      return formatedMatches;
+    }
+
+    if (!team.awayMatches) {
+      const formatedMatches = team.homeMatches.map(this.homeMatchesData);
+
+      return formatedMatches;
+    }
+
+    return team.awayMatches.map(this.awayMatchesData);
+  };
+
+  private static getLeaderboard = (team: Team): Leaderboard => {
+    const serializedMatches = this.getMatches(team);
+
     const initialLeaderboard = { totalPoints: 0,
       totalVictories: 0,
       totalDraws: 0,
       totalLosses: 0,
       goalsFavor: 0,
       goalsOwn: 0,
-      goalsBalance: 0,
-    };
+      goalsBalance: 0 };
 
-    const serializedMatches = [...team.homeMatches.map(this.homeMatchesData),
-      ...team.awayMatches.map(this.awayMatchesData)];
+    const { totalPoints, ...leaderboard } = serializedMatches
+      .reduce(this.getTeamPoints, initialLeaderboard);
 
-    const leaderboard = serializedMatches.reduce(this.formatMatches, initialLeaderboard);
-
-    const teamLeaderboard = {
+    const teamLeaderboar = {
       name: team.teamName,
+      totalPoints,
       totalGames: serializedMatches.length,
       ...leaderboard,
-      efficiency: this.calculateEfficiency(leaderboard.totalPoints, serializedMatches.length),
+      efficiency: this.calculateEfficiency(totalPoints, serializedMatches.length),
     };
 
-    return teamLeaderboard;
+    return teamLeaderboar as Leaderboard;
   };
 
   private static byPriority = (a: Leaderboard, b: Leaderboard) => {
@@ -109,10 +127,36 @@ export default class LeaderboardService {
     return lastPriority;
   };
 
-  static async list(): Promise<Leaderboard[]> {
+  static async listAllMatches(): Promise<Leaderboard[]> {
     const teams = await TeamModel.findAll({
       include: [
         { model: Matches, as: 'homeMatches', where: { inProgress: false } },
+        { model: Matches, as: 'awayMatches', where: { inProgress: false } },
+      ],
+    });
+
+    const leaderboard = teams.map(this.getLeaderboard)
+      .sort(this.byPriority);
+
+    return leaderboard;
+  }
+
+  static async listHomeMatches(): Promise<Leaderboard[]> {
+    const teams = await TeamModel.findAll({
+      include: [
+        { model: Matches, as: 'homeMatches', where: { inProgress: false } },
+      ],
+    });
+
+    const leaderboard = teams.map(this.getLeaderboard)
+      .sort(this.byPriority);
+
+    return leaderboard;
+  }
+
+  static async listAwayMatches(): Promise<Leaderboard[]> {
+    const teams = await TeamModel.findAll({
+      include: [
         { model: Matches, as: 'awayMatches', where: { inProgress: false } },
       ],
     });

@@ -5,10 +5,20 @@ import 'express-async-errors';
 
 const router = Router();
 
-router.route('/home')
+router.route('/')
   .get(
     // Validate.token,
-    LeaderboardController.list,
+    LeaderboardController.listAllMatches,
+  );
+
+router.route('/home')
+  .get(
+    LeaderboardController.listHomeMatches,
+  );
+
+router.route('/away')
+  .get(
+    LeaderboardController.listAwayMatches,
   );
 
 router.route('/home/:id')
