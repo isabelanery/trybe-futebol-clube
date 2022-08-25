@@ -20,11 +20,4 @@ export default class LeaderboardController {
 
     res.status(StatusCodes.OK).json(teams);
   }
-
-  static async findById(req: Request, res: Response) {
-    const { id } = req.params;
-    const team = await LeaderBoardService.findById(+id);
-
-    res.status(StatusCodes.OK).json(team);
-  }
 }

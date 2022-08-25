@@ -90,7 +90,7 @@ export default class LeaderboardService {
     const { totalPoints, ...leaderboard } = serializedMatches
       .reduce(this.getTeamPoints, initialLeaderboard);
 
-    const teamLeaderboar = {
+    const teamLeaderboard = {
       name: team.teamName,
       totalPoints,
       totalGames: serializedMatches.length,
@@ -98,7 +98,7 @@ export default class LeaderboardService {
       efficiency: this.calculateEfficiency(totalPoints, serializedMatches.length),
     };
 
-    return teamLeaderboar as Leaderboard;
+    return teamLeaderboard as Leaderboard;
   };
 
   private static byPriority = (a: Leaderboard, b: Leaderboard) => {
@@ -165,24 +165,5 @@ export default class LeaderboardService {
       .sort(this.byPriority);
 
     return leaderboard;
-  }
-
-  static async findById(id: number): Promise<Leaderboard> {
-    const team = await TeamModel.findByPk(id, {
-      include: [
-        { model: Matches, as: 'homeMatches', where: { inProgress: false } },
-        { model: Matches, as: 'awayMatches', where: { inProgress: false } },
-      ],
-    });
-
-    if (!team) {
-      const e = new Error('There is no team with such id!');
-      e.name = 'NotFoundError';
-      throw e;
-    }
-
-    const leaderboard = this.getLeaderboard(team);
-
-    return leaderboard as Leaderboard;
   }
 }
