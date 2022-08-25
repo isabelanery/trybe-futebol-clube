@@ -119,7 +119,7 @@ describe('/matches/:id', () => {
   before(async () => {
     sinon
       .stub(MatchesModel, "update")
-      .resolves();
+      .resolves(MatchesMock.patch);
     
       sinon
       .stub(MatchesService, "findById")
@@ -136,14 +136,15 @@ describe('/matches/:id', () => {
       chaiHttpResponse = await chai.request(app)
         .patch('/matches/41')
         .send({
-          homeTeamGoals: 7,
-          awayTeamGoals: 1,
+          homeTeamGoals: 4,
+          awayTeamGoals: 2,
         })
         .set('Authorization', tokenMock);
   
       expect(chaiHttpResponse.body).to.have.property('id');
       expect(chaiHttpResponse.body).to.have.property('homeTeamGoals');
-      expect(chaiHttpResponse.body.inProgress).to.equal(4);
+      expect(chaiHttpResponse.body.inProgress).to.equal(true);
+      expect(chaiHttpResponse.body.homeTeamGoals).to.equal(4);
     });
     
     it('Essa requisição deve retornar código de status 200', async () => {

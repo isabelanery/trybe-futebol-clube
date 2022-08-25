@@ -114,18 +114,8 @@ describe('/login', async () => {
 describe('/login/validate', () => {
   let chaiHttpResponse: Response;
   
-  before(async () => {
-    sinon
-      .stub(JwtService, "validateToken")
-      .resolves({ role: "user" });
-  });
-
-  after(()=>{
-    (JwtService.validateToken as sinon.SinonStub).restore();
-  });
-
   it('A requisição GET para rota inicial retorna um objeto com a chave "role"', async () => {
-    const tokenMock = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlVzZXIiLCJlbWFpbCI6InVzZXJAdXNlci5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTY2MDk1MjU4NCwiZXhwIjoxNjYxMjExNzg0fQ.PdfKy16WicBUFwWur3OWUyKaEsXb6dSLHQPIvgph-0w";
+    const tokenMock = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlVzZXIiLCJlbWFpbCI6InVzZXJAdXNlci5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTY2MTQ0NTM1MCwiZXhwIjoxNjYxNzA0NTUwfQ.F7TVepPls-PKcbFVaLOmvMfcFj6UnYxCAd0I2Z1WMhc";
     chaiHttpResponse = await chai.request(app)
       .get('/login/validate')
       .set('Authorization', tokenMock)
@@ -140,16 +130,16 @@ describe('/login/validate', () => {
     expect(chaiHttpResponse).to.have.status(200);
   });
 
-  // it('Caso o token enviado seja inválido, a requisição retorna um objeto com a mensagem de erro', async () => {
+  it('Caso o token enviado seja inválido, a requisição retorna um objeto com a mensagem de erro', async () => {
     
     
-  //   const tokenMock = "token";
-  //   chaiHttpResponse = await chai.request(app)
-  //     .get('/login/validate')
-  //     .set('Authorization', tokenMock)
+    const tokenMock = "token";
+    chaiHttpResponse = await chai.request(app)
+      .get('/login/validate')
+      .set('Authorization', tokenMock)
       
-  //   expect(chaiHttpResponse.body).to.have.property('message');
-  //   expect(chaiHttpResponse.body.message).to.equal('Invalid token');
-  //   expect(chaiHttpResponse).to.have.status(401);
-  // });
+    expect(chaiHttpResponse.body).to.have.property('message');
+    expect(chaiHttpResponse.body.message).to.equal('Token must be a valid token');
+    expect(chaiHttpResponse).to.have.status(401);
+  });
 });

@@ -21,7 +21,7 @@ export default class UserService {
       throw e;
     }
 
-    const token = await JwtService.createToken({ username, email, role });
+    const token = JwtService.createToken({ username, email, role });
 
     return token;
   }
