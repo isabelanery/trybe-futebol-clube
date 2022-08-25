@@ -107,7 +107,6 @@ describe('/login', async () => {
       expect(chaiHttpResponse).to.have.status(401);
     });
   });
-
   
 });
 
@@ -118,9 +117,7 @@ describe('/login/validate', () => {
     const tokenMock = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlVzZXIiLCJlbWFpbCI6InVzZXJAdXNlci5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTY2MTQ0NTM1MCwiZXhwIjoxNjYxNzA0NTUwfQ.F7TVepPls-PKcbFVaLOmvMfcFj6UnYxCAd0I2Z1WMhc";
     chaiHttpResponse = await chai.request(app)
       .get('/login/validate')
-      .set('Authorization', tokenMock)
-      
-      console.log(chaiHttpResponse.body);
+      .set('Authorization', tokenMock);
       
     expect(chaiHttpResponse.body).to.have.property('role');
     expect(chaiHttpResponse.body.role).to.equal('user');
@@ -131,8 +128,6 @@ describe('/login/validate', () => {
   });
 
   it('Caso o token enviado seja inválido, a requisição retorna um objeto com a mensagem de erro', async () => {
-    
-    
     const tokenMock = "token";
     chaiHttpResponse = await chai.request(app)
       .get('/login/validate')
